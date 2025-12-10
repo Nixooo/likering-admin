@@ -7,7 +7,7 @@ const router = express.Router();
 // Obtener todos los videos
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { search, user_id, limit = 50, offset = 0 } = req.query;
+    const { search, user_id, sort = 'recent', date_from, date_to, limit = 50, offset = 0 } = req.query;
 
     let query = `
       SELECT 
@@ -33,11 +33,33 @@ router.get('/', authenticateToken, async (req, res) => {
       paramCount++;
     }
 
+    if (date_from) {
+      conditions.push(`DATE(v.created_at) >= $${paramCount}`);
+      params.push(date_from);
+      paramCount++;
+    }
+
+    if (date_to) {
+      conditions.push(`DATE(v.created_at) <= $${paramCount}`);
+      params.push(date_to);
+      paramCount++;
+    }
+
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
     }
 
-    query += ` ORDER BY v.created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
+    // Ordenar según el parámetro sort
+    let orderBy = 'v.created_at DESC';
+    if (sort === 'popular') {
+      orderBy = 'v.visualizaciones DESC NULLS LAST';
+    } else if (sort === 'likes') {
+      orderBy = 'v.likes DESC NULLS LAST';
+    } else if (sort === 'views') {
+      orderBy = 'v.visualizaciones DESC NULLS LAST';
+    }
+
+    query += ` ORDER BY ${orderBy} LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
     params.push(limit, offset);
 
     const result = await pool.query(query, params);

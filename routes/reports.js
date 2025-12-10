@@ -7,7 +7,7 @@ const router = express.Router();
 // Obtener todos los reportes
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { estado, tipo_reporte, limit = 50, offset = 0 } = req.query;
+    const { estado, tipo_reporte, search, prioridad, date, limit = 50, offset = 0 } = req.query;
 
     let query = `
       SELECT 
@@ -39,6 +39,24 @@ router.get('/', authenticateToken, async (req, res) => {
     if (tipo_reporte) {
       conditions.push(`r.tipo_reporte = $${paramCount}`);
       params.push(tipo_reporte);
+      paramCount++;
+    }
+
+    if (search) {
+      conditions.push(`(r.motivo ILIKE $${paramCount} OR r.descripcion ILIKE $${paramCount})`);
+      params.push(`%${search}%`);
+      paramCount++;
+    }
+
+    if (prioridad) {
+      conditions.push(`r.prioridad = $${paramCount}`);
+      params.push(prioridad);
+      paramCount++;
+    }
+
+    if (date) {
+      conditions.push(`DATE(r.creado_en) = $${paramCount}`);
+      params.push(date);
       paramCount++;
     }
 

@@ -6,8 +6,10 @@ let totalPages = 1;
 // Cargar comentarios
 async function loadComments(page = 1) {
     try {
-        currentSearch = document.getElementById('searchInput').value;
-        currentVideoId = document.getElementById('videoIdInput').value;
+        currentSearch = document.getElementById('searchInput')?.value || '';
+        currentVideoId = document.getElementById('videoIdInput')?.value || '';
+        const sortBy = document.getElementById('sortCommentsFilter')?.value || 'recent';
+        const dateFilter = document.getElementById('dateFilter')?.value || '';
         currentPage = page;
 
         const params = new URLSearchParams({
@@ -21,6 +23,14 @@ async function loadComments(page = 1) {
 
         if (currentVideoId) {
             params.append('video_id', currentVideoId);
+        }
+        
+        if (sortBy) {
+            params.append('sort', sortBy);
+        }
+        
+        if (dateFilter) {
+            params.append('date', dateFilter);
         }
 
         const response = await apiRequest(`/comments?${params.toString()}`);
@@ -38,7 +48,7 @@ async function loadComments(page = 1) {
     } catch (error) {
         console.error('Error al cargar comentarios:', error);
         document.getElementById('commentsTableBody').innerHTML = 
-            '<tr><td colspan="7" class="loading">Error al cargar comentarios</td></tr>';
+            '<tr><td colspan="7" class="loading" style="text-align: center; padding: 40px; color: var(--text-muted);">Actualmente no hay comentarios disponibles</td></tr>';
     }
 }
 
@@ -142,8 +152,26 @@ if (document.getElementById('searchInput')) {
     });
 }
 
+// Limpiar filtros de comentarios
+function clearCommentFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('videoIdInput').value = '';
+    document.getElementById('sortCommentsFilter').value = 'recent';
+    document.getElementById('dateFilter').value = '';
+    loadComments(1);
+}
+
 // Cargar comentarios al iniciar
 if (window.location.pathname.includes('comments.html')) {
     loadComments();
+}
+
+// Búsqueda al presionar Enter
+if (document.getElementById('searchInput')) {
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            loadComments(1);
+        }
+    });
 }
 

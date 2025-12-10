@@ -5,7 +5,10 @@ let totalPages = 1;
 // Cargar mensajes
 async function loadMessages(page = 1) {
     try {
-        currentSearch = document.getElementById('searchInput').value;
+        currentSearch = document.getElementById('searchInput')?.value || '';
+        const sender = document.getElementById('senderFilter')?.value || '';
+        const receiver = document.getElementById('receiverFilter')?.value || '';
+        const dateFilter = document.getElementById('dateFilter')?.value || '';
         currentPage = page;
 
         const params = new URLSearchParams({
@@ -15,6 +18,18 @@ async function loadMessages(page = 1) {
 
         if (currentSearch) {
             params.append('search', currentSearch);
+        }
+        
+        if (sender) {
+            params.append('sender_username', sender);
+        }
+        
+        if (receiver) {
+            params.append('receiver_username', receiver);
+        }
+        
+        if (dateFilter) {
+            params.append('date', dateFilter);
         }
 
         const response = await apiRequest(`/messages?${params.toString()}`);
@@ -132,6 +147,15 @@ if (document.getElementById('searchInput')) {
             loadMessages(1);
         }
     });
+}
+
+// Limpiar filtros de mensajes
+function clearMessageFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('senderFilter').value = '';
+    document.getElementById('receiverFilter').value = '';
+    document.getElementById('dateFilter').value = '';
+    loadMessages(1);
 }
 
 // Cargar mensajes al iniciar

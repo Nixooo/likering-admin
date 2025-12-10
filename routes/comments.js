@@ -7,7 +7,7 @@ const router = express.Router();
 // Obtener todos los comentarios
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { search, video_id, limit = 50, offset = 0 } = req.query;
+    const { search, video_id, sort = 'recent', date, limit = 50, offset = 0 } = req.query;
 
     let query = `
       SELECT 
@@ -36,11 +36,26 @@ router.get('/', authenticateToken, async (req, res) => {
       paramCount++;
     }
 
+    if (date) {
+      conditions.push(`DATE(c.created_at) = $${paramCount}`);
+      params.push(date);
+      paramCount++;
+    }
+
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
     }
 
-    query += ` ORDER BY c.created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
+    // Ordenar según el parámetro sort
+    let orderBy = 'c.created_at DESC';
+    if (sort === 'oldest') {
+      orderBy = 'c.created_at ASC';
+    } else if (sort === 'edited') {
+      conditions.push('c.updated_at IS NOT NULL AND c.updated_at != c.created_at');
+      orderBy = 'c.updated_at DESC';
+    }
+
+    query += ` ORDER BY ${orderBy} LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
     params.push(limit, offset);
 
     const result = await pool.query(query, params);

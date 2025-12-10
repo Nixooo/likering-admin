@@ -5,7 +5,10 @@ let totalPages = 1;
 // Cargar videos
 async function loadVideos(page = 1) {
     try {
-        currentSearch = document.getElementById('searchInput').value;
+        currentSearch = document.getElementById('searchInput')?.value || '';
+        const sortBy = document.getElementById('sortFilter')?.value || 'recent';
+        const dateFrom = document.getElementById('dateFromFilter')?.value || '';
+        const dateTo = document.getElementById('dateToFilter')?.value || '';
         currentPage = page;
 
         const params = new URLSearchParams({
@@ -15,6 +18,18 @@ async function loadVideos(page = 1) {
 
         if (currentSearch) {
             params.append('search', currentSearch);
+        }
+        
+        if (sortBy) {
+            params.append('sort', sortBy);
+        }
+        
+        if (dateFrom) {
+            params.append('date_from', dateFrom);
+        }
+        
+        if (dateTo) {
+            params.append('date_to', dateTo);
         }
 
         const response = await apiRequest(`/videos?${params.toString()}`);
@@ -135,8 +150,26 @@ if (document.getElementById('searchInput')) {
     });
 }
 
+// Limpiar filtros de videos
+function clearVideoFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('sortFilter').value = 'recent';
+    document.getElementById('dateFromFilter').value = '';
+    document.getElementById('dateToFilter').value = '';
+    loadVideos(1);
+}
+
 // Cargar videos al iniciar
 if (window.location.pathname.includes('videos.html')) {
     loadVideos();
+}
+
+// Búsqueda al presionar Enter
+if (document.getElementById('searchInput')) {
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            loadVideos(1);
+        }
+    });
 }
 

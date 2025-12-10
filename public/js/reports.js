@@ -6,8 +6,11 @@ let totalPages = 1;
 // Cargar reportes
 async function loadReports(page = 1) {
     try {
-        currentStatus = document.getElementById('statusFilter').value;
-        currentType = document.getElementById('typeFilter').value;
+        currentStatus = document.getElementById('statusFilter')?.value || '';
+        currentType = document.getElementById('typeFilter')?.value || '';
+        const search = document.getElementById('searchInput')?.value || '';
+        const priority = document.getElementById('priorityFilter')?.value || '';
+        const dateFilter = document.getElementById('dateFilter')?.value || '';
         currentPage = page;
 
         const params = new URLSearchParams({
@@ -21,6 +24,18 @@ async function loadReports(page = 1) {
 
         if (currentType) {
             params.append('tipo_reporte', currentType);
+        }
+        
+        if (search) {
+            params.append('search', search);
+        }
+        
+        if (priority) {
+            params.append('prioridad', priority);
+        }
+        
+        if (dateFilter) {
+            params.append('date', dateFilter);
         }
 
         const response = await apiRequest(`/reports?${params.toString()}`);

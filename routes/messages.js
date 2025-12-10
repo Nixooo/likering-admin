@@ -7,7 +7,7 @@ const router = express.Router();
 // Obtener todos los mensajes
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const { search, sender_id, receiver_id, limit = 50, offset = 0 } = req.query;
+    const { search, sender_id, receiver_id, sender_username, receiver_username, date, limit = 50, offset = 0 } = req.query;
 
     let query = `
       SELECT 
@@ -40,6 +40,24 @@ router.get('/', authenticateToken, async (req, res) => {
     if (receiver_id) {
       conditions.push(`m.receiver_id = $${paramCount}`);
       params.push(receiver_id);
+      paramCount++;
+    }
+
+    if (sender_username) {
+      conditions.push(`u1.username ILIKE $${paramCount}`);
+      params.push(`%${sender_username}%`);
+      paramCount++;
+    }
+
+    if (receiver_username) {
+      conditions.push(`u2.username ILIKE $${paramCount}`);
+      params.push(`%${receiver_username}%`);
+      paramCount++;
+    }
+
+    if (date) {
+      conditions.push(`DATE(m.created_at) = $${paramCount}`);
+      params.push(date);
       paramCount++;
     }
 
