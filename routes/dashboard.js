@@ -140,6 +140,37 @@ router.get('/', authenticateToken, async (req, res) => {
       console.error('Error en estadísticas de videos semanales:', err.message);
     }
 
+    // Usuarios por plan
+    let usersByPlan = { rows: [] };
+    try {
+      usersByPlan = await pool.query(`
+        SELECT 
+          COALESCE(plan, 'Sin plan') as plan,
+          COUNT(*) as cantidad
+        FROM users
+        GROUP BY plan
+        ORDER BY cantidad DESC
+      `);
+    } catch (err) {
+      console.error('Error en usuarios por plan:', err.message);
+    }
+
+    // Usuarios por fecha (últimos 30 días para gráfica de líneas)
+    let usersByDate = { rows: [] };
+    try {
+      usersByDate = await pool.query(`
+        SELECT 
+          DATE(created_at) as fecha,
+          COUNT(*) as cantidad
+        FROM users
+        WHERE created_at >= NOW() - INTERVAL '30 days'
+        GROUP BY DATE(created_at)
+        ORDER BY fecha ASC
+      `);
+    } catch (err) {
+      console.error('Error en usuarios por fecha:', err.message);
+    }
+
     res.json({
       general: {
         totalUsuarios: parseInt(totalUsers.rows[0].count),
