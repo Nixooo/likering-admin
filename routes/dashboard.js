@@ -16,7 +16,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
     try {
       totalUsers = await pool.query('SELECT COUNT(*) FROM users');
-      activeUsers = await pool.query('SELECT COUNT(*) FROM users');
+      activeUsers = await pool.query("SELECT COUNT(*) FROM users WHERE estado = 'Activo'");
       totalVideos = await pool.query('SELECT COUNT(*) FROM videos');
       totalReports = await pool.query('SELECT COUNT(*) FROM reportes');
       pendingReports = await pool.query("SELECT COUNT(*) FROM reportes WHERE estado = 'pendiente'");

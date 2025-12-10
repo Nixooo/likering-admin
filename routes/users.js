@@ -29,8 +29,11 @@ router.get('/', authenticateToken, async (req, res) => {
       paramCount++;
     }
 
-    // Removido filtro de estado ya que no sabemos si existe la columna activo
-    // Se puede agregar después si existe
+    if (estado) {
+      conditions.push(`u.estado = $${paramCount}`);
+      params.push(estado);
+      paramCount++;
+    }
 
     if (conditions.length > 0) {
       query += ' WHERE ' + conditions.join(' AND ');
@@ -96,26 +99,22 @@ router.get('/:id/stats', authenticateToken, async (req, res) => {
 router.patch('/:id/status', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
-    const { activo } = req.body;
+    const { estado } = req.body;
 
-    if (typeof activo !== 'boolean') {
-      return res.status(400).json({ error: 'El campo activo debe ser un booleano' });
+    if (!estado || (estado !== 'Activo' && estado !== 'Desactivo')) {
+      return res.status(400).json({ error: 'El estado debe ser "Activo" o "Desactivo"' });
     }
 
-    // Nota: Ajustar esta query según la estructura real de la tabla users
-    // Por ahora comentamos ya que no sabemos si existe la columna 'activo'
     const result = await pool.query(
-      'UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE user_id = $1 RETURNING *',
-      [id]
+      'UPDATE users SET estado = $1, updated_at = CURRENT_TIMESTAMP WHERE user_id = $2 RETURNING *',
+      [estado, id]
     );
-    
-    // Si necesitas activar/desactivar, primero verifica si existe la columna 'activo' o 'is_active'
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
 
-    res.json({ message: `Usuario ${activo ? 'activado' : 'desactivado'} correctamente`, user: result.rows[0] });
+    res.json({ message: `Usuario ${estado === 'Activo' ? 'activado' : 'desactivado'} correctamente`, user: result.rows[0] });
   } catch (error) {
     console.error('Error al actualizar estado del usuario:', error);
     res.status(500).json({ error: 'Error al actualizar estado del usuario' });

@@ -12,6 +12,7 @@ const followsRoutes = require('./routes/follows');
 const messagesRoutes = require('./routes/messages');
 const videosRoutes = require('./routes/videos');
 const analyticsRoutes = require('./routes/analytics');
+const publicReportsRoutes = require('./routes/public-reports');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -34,6 +35,7 @@ app.use('/api/follows', followsRoutes);
 app.use('/api/messages', messagesRoutes);
 app.use('/api/videos', videosRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/public/reports', publicReportsRoutes); // Endpoint público para reportes desde la app
 
 // Ruta principal - servir el index.html
 app.get('/', (req, res) => {

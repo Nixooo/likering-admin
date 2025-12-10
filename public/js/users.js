@@ -61,16 +61,16 @@ function displayUsers(users) {
             <td>${(user.total_likes || 0).toLocaleString()}</td>
             <td>${(user.total_visualizaciones || 0).toLocaleString()}</td>
             <td>
-                <span class="status-badge ${user.activo ? 'status-active' : 'status-inactive'}">
-                    ${user.activo ? 'Activo' : 'Inactivo'}
+                <span class="status-badge ${(user.estado || 'Activo') === 'Activo' ? 'status-active' : 'status-inactive'}">
+                    ${user.estado || 'Activo'}
                 </span>
             </td>
             <td>
                 <button 
-                    class="btn btn-sm ${user.activo ? 'btn-danger' : 'btn-success'}" 
-                    onclick="toggleUserStatus(${user.id}, ${!user.activo})"
+                    class="btn btn-sm ${(user.estado || 'Activo') === 'Activo' ? 'btn-danger' : 'btn-success'}" 
+                    onclick="toggleUserStatus(${user.id}, '${(user.estado || 'Activo') === 'Activo' ? 'Desactivo' : 'Activo'}')"
                 >
-                    ${user.activo ? 'Desactivar' : 'Activar'}
+                    ${(user.estado || 'Activo') === 'Activo' ? 'Desactivar' : 'Activar'}
                 </button>
                 <button 
                     class="btn btn-sm btn-secondary" 
@@ -85,15 +85,16 @@ function displayUsers(users) {
 }
 
 // Cambiar estado de usuario
-async function toggleUserStatus(userId, newStatus) {
-    if (!confirm(`¿Estás seguro de que deseas ${newStatus ? 'activar' : 'desactivar'} este usuario?`)) {
+async function toggleUserStatus(userId, newEstado) {
+    const estadoTexto = newEstado === 'Activo' ? 'activar' : 'desactivar';
+    if (!confirm(`¿Estás seguro de que deseas ${estadoTexto} este usuario?`)) {
         return;
     }
 
     try {
         const response = await apiRequest(`/users/${userId}/status`, {
             method: 'PATCH',
-            body: JSON.stringify({ activo: newStatus })
+            body: JSON.stringify({ estado: newEstado })
         });
 
         if (!response) return;
@@ -104,7 +105,7 @@ async function toggleUserStatus(userId, newStatus) {
             return;
         }
 
-        alert(`Usuario ${newStatus ? 'activado' : 'desactivado'} correctamente`);
+        alert(`Usuario ${estadoTexto}do correctamente`);
         loadUsers(currentPage);
     } catch (error) {
         console.error('Error al cambiar estado:', error);
@@ -129,7 +130,7 @@ async function viewUserDetails(userId) {
             <p><strong>Username:</strong> ${user.username || 'N/A'}</p>
             <p><strong>Email:</strong> ${user.email || 'N/A'}</p>
             <p><strong>Nombre:</strong> ${user.nombre || 'N/A'}</p>
-            <p><strong>Estado:</strong> ${user.activo ? 'Activo' : 'Inactivo'}</p>
+            <p><strong>Estado:</strong> ${user.estado || 'Activo'}</p>
             <hr>
             <h4>Estadísticas</h4>
             <p><strong>Total Videos:</strong> ${user.total_videos || 0}</p>
