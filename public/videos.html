@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios - Likering Admin</title>
+    <title>Videos - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -16,10 +16,10 @@
             <a href="/dashboard.html" class="nav-item">
                 <span>📊</span> Dashboard
             </a>
-            <a href="/users.html" class="nav-item active">
+            <a href="/users.html" class="nav-item">
                 <span>👥</span> Usuarios
             </a>
-            <a href="/videos.html" class="nav-item">
+            <a href="/videos.html" class="nav-item active">
                 <span>🎥</span> Videos
             </a>
             <a href="/comments.html" class="nav-item">
@@ -45,41 +45,17 @@
     </div>
     <div class="main-content">
         <header class="header">
-            <h1>Gestión de Usuarios</h1>
+            <h1>Gestión de Videos</h1>
             <div class="header-actions">
                 <div class="filters">
-                    <input type="text" id="searchInput" placeholder="Buscar por nombre, email o username..." class="search-input">
-                    <select id="statusFilter" class="filter-select">
-                        <option value="">Todos los estados</option>
-                        <option value="activo">Activos</option>
-                        <option value="inactivo">Inactivos</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="loadUsers()">Buscar</button>
+                    <input type="text" id="searchInput" placeholder="Buscar por título o usuario..." class="search-input">
+                    <button class="btn btn-primary" onclick="loadVideos()">Buscar</button>
                 </div>
             </div>
         </header>
         <div class="content">
-            <div class="table-container">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Usuario</th>
-                            <th>Email</th>
-                            <th>Nombre</th>
-                            <th>Videos</th>
-                            <th>Likes</th>
-                            <th>Visualizaciones</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <tr>
-                            <td colspan="9" class="loading">Cargando usuarios...</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="videos-grid" id="videosGrid">
+                <div class="loading">Cargando videos...</div>
             </div>
             <div class="pagination">
                 <button class="btn btn-secondary" id="prevPage" onclick="changePage(-1)">Anterior</button>
@@ -89,7 +65,7 @@
         </div>
     </div>
     <script src="/js/auth.js"></script>
-    <script src="/js/users.js"></script>
+    <script src="/js/videos.js"></script>
 </body>
 </html>
 

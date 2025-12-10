@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reportes - Likering Admin</title>
+    <title>Mensajes - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -28,10 +28,10 @@
             <a href="/follows.html" class="nav-item">
                 <span>🔗</span> Seguimientos
             </a>
-            <a href="/messages.html" class="nav-item">
+            <a href="/messages.html" class="nav-item active">
                 <span>✉️</span> Mensajes
             </a>
-            <a href="/reports.html" class="nav-item active">
+            <a href="/reports.html" class="nav-item">
                 <span>⚠️</span> Reportes
             </a>
             <a href="/analytics.html" class="nav-item">
@@ -45,24 +45,11 @@
     </div>
     <div class="main-content">
         <header class="header">
-            <h1>Gestión de Reportes</h1>
+            <h1>Gestión de Mensajes</h1>
             <div class="header-actions">
                 <div class="filters">
-                    <select id="statusFilter" class="filter-select">
-                        <option value="">Todos los estados</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="en_revision">En Revisión</option>
-                        <option value="resuelto">Resuelto</option>
-                        <option value="rechazado">Rechazado</option>
-                    </select>
-                    <select id="typeFilter" class="filter-select">
-                        <option value="">Todos los tipos</option>
-                        <option value="video">Video</option>
-                        <option value="usuario">Usuario</option>
-                        <option value="comentario">Comentario</option>
-                        <option value="otro">Otro</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="loadReports()">Filtrar</button>
+                    <input type="text" id="searchInput" placeholder="Buscar en mensajes..." class="search-input">
+                    <button class="btn btn-primary" onclick="loadMessages()">Buscar</button>
                 </div>
             </div>
         </header>
@@ -72,19 +59,16 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Tipo</th>
-                            <th>Reportado Por</th>
-                            <th>Reportado</th>
-                            <th>Motivo</th>
-                            <th>Estado</th>
-                            <th>Prioridad</th>
+                            <th>De</th>
+                            <th>Para</th>
+                            <th>Mensaje</th>
                             <th>Fecha</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="reportsTableBody">
+                    <tbody id="messagesTableBody">
                         <tr>
-                            <td colspan="9" class="loading">Cargando reportes...</td>
+                            <td colspan="6" class="loading">Cargando mensajes...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -96,21 +80,8 @@
             </div>
         </div>
     </div>
-    
-    <!-- Modal para ver/editar reporte -->
-    <div id="reportModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Detalles del Reporte</h2>
-            <div id="reportDetails"></div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
-            </div>
-        </div>
-    </div>
-    
     <script src="/js/auth.js"></script>
-    <script src="/js/reports.js"></script>
+    <script src="/js/messages.js"></script>
 </body>
 </html>
 

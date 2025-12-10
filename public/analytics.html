@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Likering Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-section">
+            <img src="https://i.postimg.cc/FKgZRLrW/image.png" alt="Likering Logo" class="sidebar-logo">
+            <h2>Likering Admin</h2>
+        </div>
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="/users.html" class="nav-item">
+                <span>👥</span> Usuarios
+            </a>
+            <a href="/videos.html" class="nav-item">
+                <span>🎥</span> Videos
+            </a>
+            <a href="/comments.html" class="nav-item">
+                <span>💬</span> Comentarios
+            </a>
+            <a href="/follows.html" class="nav-item">
+                <span>🔗</span> Seguimientos
+            </a>
+            <a href="/messages.html" class="nav-item">
+                <span>✉️</span> Mensajes
+            </a>
+            <a href="/reports.html" class="nav-item">
+                <span>⚠️</span> Reportes
+            </a>
+            <a href="/analytics.html" class="nav-item active">
+                <span>📈</span> Analytics
+            </a>
+        </nav>
+        <div class="user-info">
+            <p id="adminName"></p>
+            <button class="btn btn-secondary" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+    <div class="main-content">
+        <header class="header">
+            <h1>Analytics Avanzado</h1>
+            <p>Análisis detallado y métricas de rendimiento</p>
+        </header>
+        <div class="dashboard-content">
+            <div class="dashboard-grid">
+                <div class="dashboard-card chart-card">
+                    <h2>Crecimiento de Usuarios</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+                <div class="dashboard-card chart-card">
+                    <h2>Crecimiento de Videos</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="videoGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card chart-card">
+                    <h2>Actividad por Hora del Día</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="activityByHourChart"></canvas>
+                    </div>
+                </div>
+                <div class="dashboard-card">
+                    <h2>Métricas de Engagement</h2>
+                    <div class="engagement-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Tasa de Engagement Promedio</span>
+                            <span class="stat-value" id="avgEngagement">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Likes Promedio</span>
+                            <span class="stat-value" id="avgLikes">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Visualizaciones Promedio</span>
+                            <span class="stat-value" id="avgViews">0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dashboard-card">
+                <h2>Top 10 Videos Más Populares</h2>
+                <div id="topVideosList" class="list-container"></div>
+            </div>
+            <div class="dashboard-card">
+                <h2>Top 10 Usuarios Más Activos</h2>
+                <div id="topUsersList" class="list-container"></div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/auth.js"></script>
+    <script src="/js/analytics.js"></script>
+</body>
+</html>
+

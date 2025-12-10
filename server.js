@@ -7,6 +7,11 @@ const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const reportsRoutes = require('./routes/reports');
 const dashboardRoutes = require('./routes/dashboard');
+const commentsRoutes = require('./routes/comments');
+const followsRoutes = require('./routes/follows');
+const messagesRoutes = require('./routes/messages');
+const videosRoutes = require('./routes/videos');
+const analyticsRoutes = require('./routes/analytics');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +29,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/reports', reportsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/comments', commentsRoutes);
+app.use('/api/follows', followsRoutes);
+app.use('/api/messages', messagesRoutes);
+app.use('/api/videos', videosRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Ruta principal - servir el index.html
 app.get('/', (req, res) => {

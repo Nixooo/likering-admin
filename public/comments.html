@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reportes - Likering Admin</title>
+    <title>Comentarios - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
             <a href="/videos.html" class="nav-item">
                 <span>🎥</span> Videos
             </a>
-            <a href="/comments.html" class="nav-item">
+            <a href="/comments.html" class="nav-item active">
                 <span>💬</span> Comentarios
             </a>
             <a href="/follows.html" class="nav-item">
@@ -31,7 +31,7 @@
             <a href="/messages.html" class="nav-item">
                 <span>✉️</span> Mensajes
             </a>
-            <a href="/reports.html" class="nav-item active">
+            <a href="/reports.html" class="nav-item">
                 <span>⚠️</span> Reportes
             </a>
             <a href="/analytics.html" class="nav-item">
@@ -45,24 +45,12 @@
     </div>
     <div class="main-content">
         <header class="header">
-            <h1>Gestión de Reportes</h1>
+            <h1>Gestión de Comentarios</h1>
             <div class="header-actions">
                 <div class="filters">
-                    <select id="statusFilter" class="filter-select">
-                        <option value="">Todos los estados</option>
-                        <option value="pendiente">Pendiente</option>
-                        <option value="en_revision">En Revisión</option>
-                        <option value="resuelto">Resuelto</option>
-                        <option value="rechazado">Rechazado</option>
-                    </select>
-                    <select id="typeFilter" class="filter-select">
-                        <option value="">Todos los tipos</option>
-                        <option value="video">Video</option>
-                        <option value="usuario">Usuario</option>
-                        <option value="comentario">Comentario</option>
-                        <option value="otro">Otro</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="loadReports()">Filtrar</button>
+                    <input type="text" id="searchInput" placeholder="Buscar por texto o usuario..." class="search-input">
+                    <input type="text" id="videoIdInput" placeholder="ID del video (opcional)" class="search-input">
+                    <button class="btn btn-primary" onclick="loadComments()">Buscar</button>
                 </div>
             </div>
         </header>
@@ -72,19 +60,17 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Tipo</th>
-                            <th>Reportado Por</th>
-                            <th>Reportado</th>
-                            <th>Motivo</th>
-                            <th>Estado</th>
-                            <th>Prioridad</th>
+                            <th>Usuario</th>
+                            <th>Comentario</th>
+                            <th>Video</th>
                             <th>Fecha</th>
+                            <th>Editado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="reportsTableBody">
+                    <tbody id="commentsTableBody">
                         <tr>
-                            <td colspan="9" class="loading">Cargando reportes...</td>
+                            <td colspan="7" class="loading">Cargando comentarios...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -96,21 +82,8 @@
             </div>
         </div>
     </div>
-    
-    <!-- Modal para ver/editar reporte -->
-    <div id="reportModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Detalles del Reporte</h2>
-            <div id="reportDetails"></div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
-            </div>
-        </div>
-    </div>
-    
     <script src="/js/auth.js"></script>
-    <script src="/js/reports.js"></script>
+    <script src="/js/comments.js"></script>
 </body>
 </html>
 
