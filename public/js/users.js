@@ -38,7 +38,7 @@ async function loadUsers(page = 1) {
     } catch (error) {
         console.error('Error al cargar usuarios:', error);
         document.getElementById('usersTableBody').innerHTML = 
-            '<tr><td colspan="9" class="loading">Error al cargar usuarios</td></tr>';
+            '<tr><td colspan="8" class="loading">Error al cargar usuarios</td></tr>';
     }
 }
 
@@ -47,16 +47,25 @@ function displayUsers(users) {
     const tbody = document.getElementById('usersTableBody');
     
     if (users.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="loading">No se encontraron usuarios</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="loading">No se encontraron usuarios</td></tr>';
         return;
     }
 
     tbody.innerHTML = users.map(user => `
         <tr>
-            <td>${user.id}</td>
-            <td>${user.username || 'N/A'}</td>
-            <td>${user.email || 'N/A'}</td>
-            <td>${user.nombre || 'N/A'}</td>
+            <td>${user.user_id || user.id || 'N/A'}</td>
+            <td>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="${user.image_url || 'https://ui-avatars.com/api/?name=' + (user.username || 'User') + '&background=3b82f6&color=fff&size=32'}" 
+                         alt="${user.username}" 
+                         style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;"
+                         onerror="this.src='https://ui-avatars.com/api/?name=${user.username || 'User'}&background=3b82f6&color=fff&size=32'">
+                    <span>@${user.username || 'N/A'}</span>
+                </div>
+            </td>
+            <td>
+                <span class="user-plan">${(user.plan || 'azul').toUpperCase()}</span>
+            </td>
             <td>${user.total_videos || 0}</td>
             <td>${(user.total_likes || 0).toLocaleString()}</td>
             <td>${(user.total_visualizaciones || 0).toLocaleString()}</td>
@@ -68,13 +77,13 @@ function displayUsers(users) {
             <td>
                 <button 
                     class="btn btn-sm ${(user.estado || 'Activo') === 'Activo' ? 'btn-danger' : 'btn-success'}" 
-                    onclick="toggleUserStatus(${user.id}, '${(user.estado || 'Activo') === 'Activo' ? 'Desactivo' : 'Activo'}')"
+                    onclick="toggleUserStatus(${user.user_id || user.id}, '${(user.estado || 'Activo') === 'Activo' ? 'Desactivo' : 'Activo'}')"
                 >
                     ${(user.estado || 'Activo') === 'Activo' ? 'Desactivar' : 'Activar'}
                 </button>
                 <button 
                     class="btn btn-sm btn-secondary" 
-                    onclick="viewUserDetails(${user.id})"
+                    onclick="viewUserDetails(${user.user_id || user.id})"
                     style="margin-left: 5px;"
                 >
                     Ver Detalles
@@ -120,29 +129,103 @@ async function viewUserDetails(userId) {
         if (!response) return;
 
         if (!response.ok) {
-            throw new Error('Error al cargar detalles');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || 'Error al cargar detalles');
         }
 
         const user = await response.json();
-        const details = `
-            <h3>Detalles del Usuario</h3>
-            <p><strong>ID:</strong> ${user.id}</p>
-            <p><strong>Username:</strong> ${user.username || 'N/A'}</p>
-            <p><strong>Email:</strong> ${user.email || 'N/A'}</p>
-            <p><strong>Nombre:</strong> ${user.nombre || 'N/A'}</p>
-            <p><strong>Estado:</strong> ${user.estado || 'Activo'}</p>
-            <hr>
-            <h4>Estadísticas</h4>
-            <p><strong>Total Videos:</strong> ${user.total_videos || 0}</p>
-            <p><strong>Total Likes:</strong> ${(user.total_likes || 0).toLocaleString()}</p>
-            <p><strong>Total Visualizaciones:</strong> ${(user.total_visualizaciones || 0).toLocaleString()}</p>
-            <p><strong>Total Seguidores:</strong> ${user.total_seguidores || 0}</p>
-            <p><strong>Total Siguiendo:</strong> ${user.total_siguiendo || 0}</p>
-        `;
-        alert(details.replace(/<[^>]*>/g, ''));
+        
+        // Crear modal en lugar de alert
+        showUserDetailsModal(user);
     } catch (error) {
         console.error('Error al cargar detalles:', error);
-        alert('Error al cargar los detalles del usuario');
+        alert('Error al cargar los detalles del usuario: ' + error.message);
+    }
+}
+
+// Mostrar modal de detalles de usuario
+function showUserDetailsModal(user) {
+    const modal = document.getElementById('userDetailsModal');
+    const content = document.getElementById('userDetailsContent');
+    
+    content.innerHTML = `
+        <div class="user-details-header">
+            <img src="${user.image_url || 'https://ui-avatars.com/api/?name=' + (user.username || 'User') + '&background=3b82f6&color=fff&size=128'}" 
+                 alt="${user.username}" 
+                 class="user-details-avatar"
+                 onerror="this.src='https://ui-avatars.com/api/?name=${user.username || 'User'}&background=3b82f6&color=fff&size=128'">
+            <div>
+                <h3>@${user.username || 'N/A'}</h3>
+                <span class="user-plan">Plan: ${(user.plan || 'azul').toUpperCase()}</span>
+                <span class="status-badge ${(user.estado || 'Activo') === 'Activo' ? 'status-active' : 'status-inactive'}" style="margin-left: 10px;">
+                    ${user.estado || 'Activo'}
+                </span>
+            </div>
+        </div>
+        <div class="user-details-info">
+            <div class="detail-row">
+                <span class="detail-label">ID:</span>
+                <span class="detail-value">${user.user_id || user.id || 'N/A'}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Creado:</span>
+                <span class="detail-value">${user.created_at ? new Date(user.created_at).toLocaleDateString('es-ES') : 'N/A'}</span>
+            </div>
+        </div>
+        <hr style="margin: 20px 0; border-color: var(--border-color);">
+        <h4 style="margin-bottom: 15px; color: var(--text-primary);">Estadísticas</h4>
+        <div class="user-stats-grid">
+            <div class="stat-box">
+                <div class="stat-box-icon">🎥</div>
+                <div class="stat-box-info">
+                    <div class="stat-box-value">${user.total_videos || 0}</div>
+                    <div class="stat-box-label">Videos</div>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-icon">❤️</div>
+                <div class="stat-box-info">
+                    <div class="stat-box-value">${(user.total_likes || 0).toLocaleString()}</div>
+                    <div class="stat-box-label">Likes</div>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-icon">👁️</div>
+                <div class="stat-box-info">
+                    <div class="stat-box-value">${(user.total_visualizaciones || 0).toLocaleString()}</div>
+                    <div class="stat-box-label">Visualizaciones</div>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-icon">👥</div>
+                <div class="stat-box-info">
+                    <div class="stat-box-value">${user.total_seguidores || user.followers || 0}</div>
+                    <div class="stat-box-label">Seguidores</div>
+                </div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-box-icon">➕</div>
+                <div class="stat-box-info">
+                    <div class="stat-box-value">${user.total_siguiendo || user.following || 0}</div>
+                    <div class="stat-box-label">Siguiendo</div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    modal.style.display = 'block';
+}
+
+// Cerrar modal
+function closeUserDetailsModal() {
+    document.getElementById('userDetailsModal').style.display = 'none';
+}
+
+// Cerrar modal al hacer clic fuera
+window.onclick = function(event) {
+    const modal = document.getElementById('userDetailsModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
     }
 }
 

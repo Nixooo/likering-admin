@@ -39,7 +39,7 @@ router.get('/', authenticateToken, async (req, res) => {
       query += ' WHERE ' + conditions.join(' AND ');
     }
 
-    query += ' GROUP BY u.user_id';
+    query += ' GROUP BY u.user_id, u.username, u.image_url, u.plan, u.estado, u.created_at, u.updated_at';
     query += ` ORDER BY u.created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
     params.push(limit, offset);
 
@@ -81,7 +81,7 @@ router.get('/:id/stats', authenticateToken, async (req, res) => {
       FROM users u
       LEFT JOIN videos v ON u.user_id = v.user_id
       WHERE u.user_id = $1
-      GROUP BY u.user_id
+      GROUP BY u.user_id, u.username, u.image_url, u.plan, u.estado, u.created_at, u.updated_at, u.followers, u.following
     `, [id]);
 
     if (result.rows.length === 0) {
@@ -135,7 +135,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
       FROM users u
       LEFT JOIN videos v ON u.user_id = v.user_id
       WHERE u.user_id = $1
-      GROUP BY u.user_id
+      GROUP BY u.user_id, u.username, u.image_url, u.plan, u.estado, u.created_at, u.updated_at
     `, [id]);
 
     if (result.rows.length === 0) {

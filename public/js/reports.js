@@ -38,7 +38,7 @@ async function loadReports(page = 1) {
     } catch (error) {
         console.error('Error al cargar reportes:', error);
         document.getElementById('reportsTableBody').innerHTML = 
-            '<tr><td colspan="9" class="loading">Error al cargar reportes</td></tr>';
+            '<tr><td colspan="9" class="loading" style="text-align: center; padding: 40px; color: var(--text-muted);">Actualmente no hay reportes disponibles</td></tr>';
     }
 }
 
@@ -47,7 +47,7 @@ function displayReports(reports) {
     const tbody = document.getElementById('reportsTableBody');
     
     if (reports.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="9" class="loading">No se encontraron reportes</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="loading" style="text-align: center; padding: 40px; color: var(--text-muted);">Actualmente no hay reportes disponibles</td></tr>';
         return;
     }
 

@@ -20,9 +20,9 @@ router.get('/', authenticateToken, async (req, res) => {
         v.url as video_url,
         admin.nombre as resuelto_por_nombre
       FROM reportes r
-      LEFT JOIN users u_reporter ON r.id_usuario_reporter = u_reporter.id
-      LEFT JOIN users u_reported ON r.id_usuario_reportado = u_reported.id
-      LEFT JOIN videos v ON r.id_video_reportado = v.id
+      LEFT JOIN users u_reporter ON r.id_usuario_reporter = u_reporter.user_id
+      LEFT JOIN users u_reported ON r.id_usuario_reportado = u_reported.user_id
+      LEFT JOIN videos v ON r.id_video_reportado = v.video_id
       LEFT JOIN UsersAdmins admin ON r.resuelto_por = admin.id
     `;
 
@@ -52,7 +52,7 @@ router.get('/', authenticateToken, async (req, res) => {
     const result = await pool.query(query, params);
 
     // Obtener total de reportes
-    let countQuery = 'SELECT COUNT(*) FROM Reportes';
+    let countQuery = 'SELECT COUNT(*) FROM reportes';
     const countParams = [];
     let countParamNum = 1;
     
@@ -94,9 +94,9 @@ router.get('/:id', authenticateToken, async (req, res) => {
         v.url as video_url,
         admin.nombre as resuelto_por_nombre
       FROM reportes r
-      LEFT JOIN users u_reporter ON r.id_usuario_reporter = u_reporter.id
-      LEFT JOIN users u_reported ON r.id_usuario_reportado = u_reported.id
-      LEFT JOIN videos v ON r.id_video_reportado = v.id
+      LEFT JOIN users u_reporter ON r.id_usuario_reporter = u_reporter.user_id
+      LEFT JOIN users u_reported ON r.id_usuario_reportado = u_reported.user_id
+      LEFT JOIN videos v ON r.id_video_reportado = v.video_id
       LEFT JOIN UsersAdmins admin ON r.resuelto_por = admin.id
       WHERE r.id = $1
     `, [id]);
@@ -128,7 +128,7 @@ router.patch('/:id/status', authenticateToken, async (req, res) => {
     }
 
     const result = await pool.query(
-      `UPDATE Reportes 
+      `UPDATE reportes 
        SET estado = $1, 
            notas_admin = COALESCE($2, notas_admin),
            prioridad = COALESCE($3, prioridad),
@@ -160,7 +160,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO Reportes 
+      `INSERT INTO reportes 
        (tipo_reporte, id_usuario_reportado, id_video_reportado, id_usuario_reporter, motivo, descripcion, prioridad)
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,

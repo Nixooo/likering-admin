@@ -32,7 +32,7 @@ async function loadMessages(page = 1) {
     } catch (error) {
         console.error('Error al cargar mensajes:', error);
         document.getElementById('messagesTableBody').innerHTML = 
-            '<tr><td colspan="6" class="loading">Error al cargar mensajes</td></tr>';
+            '<tr><td colspan="6" class="loading" style="text-align: center; padding: 40px; color: var(--text-muted);">Actualmente no hay mensajes disponibles</td></tr>';
     }
 }
 
@@ -41,7 +41,7 @@ function displayMessages(messages) {
     const tbody = document.getElementById('messagesTableBody');
     
     if (messages.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">No se encontraron mensajes</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="loading" style="text-align: center; padding: 40px; color: var(--text-muted);">Actualmente no hay mensajes disponibles</td></tr>';
         return;
     }
 

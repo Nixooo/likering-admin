@@ -65,8 +65,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Usuario</th>
-                            <th>Email</th>
-                            <th>Nombre</th>
+                            <th>Plan</th>
                             <th>Videos</th>
                             <th>Likes</th>
                             <th>Visualizaciones</th>
@@ -76,7 +75,7 @@
                     </thead>
                     <tbody id="usersTableBody">
                         <tr>
-                            <td colspan="9" class="loading">Cargando usuarios...</td>
+                            <td colspan="8" class="loading">Cargando usuarios...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -88,6 +87,20 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal de Detalles de Usuario -->
+    <div class="modal" id="userDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header-custom">
+                <h2>Detalles del Usuario</h2>
+                <span class="modal-close" onclick="closeUserDetailsModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="userDetailsContent">
+                <!-- Contenido se llena dinámicamente -->
+            </div>
+        </div>
+    </div>
+    
     <script src="/js/auth.js"></script>
     <script src="/js/users.js"></script>
 </body>
