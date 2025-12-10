@@ -60,19 +60,19 @@ async function getUserByUsername(username) {
     const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
     const user = result.rows[0];
     if (user) {
-        // Normalizar: asegurar que siempre tenga ambos 'id' y 'user_id'
+        // IMPORTANTE: La tabla users tiene 'id', NO 'user_id'
+        // Normalizar: asegurar que siempre tenga ambos 'id' y 'user_id' para compatibilidad
+        // Primero verificar 'id' (que es lo que realmente existe en la BD)
+        if (user.id && !user.user_id) {
+            user.user_id = user.id;  // Normalizar id -> user_id
+        }
+        // Si por alguna razón existe user_id pero no id, también normalizar
         if (user.user_id && !user.id) {
             user.id = user.user_id;
         }
-        if (user.id && !user.user_id) {
-            user.user_id = user.id;
-        }
-        // Si ninguno existe, intentar usar el primer campo numérico (puede ser 'id' en PostgreSQL)
-        if (!user.user_id && !user.id && result.rows[0]) {
-            // PostgreSQL devuelve campos en minúsculas, verificar todas las variantes
-            const row = result.rows[0];
-            user.user_id = row.user_id || row.id || row.USER_ID || null;
-            user.id = user.user_id;
+        // Si no existe ninguno (no debería pasar), intentar obtener de cualquier forma
+        if (!user.user_id && !user.id) {
+            console.warn('⚠️ [getUserByUsername] Usuario sin ID:', username);
         }
     }
     return user;
