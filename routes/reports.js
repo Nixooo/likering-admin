@@ -19,7 +19,7 @@ router.get('/', authenticateToken, async (req, res) => {
         v.titulo as video_titulo,
         v.url as video_url,
         admin.nombre as resuelto_por_nombre
-      FROM Reportes r
+      FROM reportes r
       LEFT JOIN users u_reporter ON r.id_usuario_reporter = u_reporter.id
       LEFT JOIN users u_reported ON r.id_usuario_reportado = u_reported.id
       LEFT JOIN videos v ON r.id_video_reportado = v.id
@@ -93,7 +93,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
         v.titulo as video_titulo,
         v.url as video_url,
         admin.nombre as resuelto_por_nombre
-      FROM Reportes r
+      FROM reportes r
       LEFT JOIN users u_reporter ON r.id_usuario_reporter = u_reporter.id
       LEFT JOIN users u_reported ON r.id_usuario_reportado = u_reported.id
       LEFT JOIN videos v ON r.id_video_reportado = v.id

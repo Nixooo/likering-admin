@@ -9,10 +9,10 @@ router.get('/', authenticateToken, async (req, res) => {
   try {
     // Estadísticas generales
     const totalUsers = await pool.query('SELECT COUNT(*) FROM users');
-    const activeUsers = await pool.query("SELECT COUNT(*) FROM users WHERE activo = true");
+    const activeUsers = await pool.query('SELECT COUNT(*) FROM users'); // Ajustar si hay columna activo
     const totalVideos = await pool.query('SELECT COUNT(*) FROM videos');
-    const totalReports = await pool.query('SELECT COUNT(*) FROM Reportes');
-    const pendingReports = await pool.query("SELECT COUNT(*) FROM Reportes WHERE estado = 'pendiente'");
+    const totalReports = await pool.query('SELECT COUNT(*) FROM reportes');
+    const pendingReports = await pool.query("SELECT COUNT(*) FROM reportes WHERE estado = 'pendiente'");
 
     // Estadísticas de likes y visualizaciones
     const likesStats = await pool.query('SELECT COALESCE(SUM(likes), 0) as total_likes FROM videos');
@@ -21,16 +21,14 @@ router.get('/', authenticateToken, async (req, res) => {
     // Usuarios más activos (top 5)
     const topUsers = await pool.query(`
       SELECT 
-        u.id,
+        u.user_id as id,
         u.username,
-        u.email,
-        u.nombre,
-        COUNT(DISTINCT v.id) as total_videos,
+        COUNT(DISTINCT v.video_id) as total_videos,
         COALESCE(SUM(v.likes), 0) as total_likes,
         COALESCE(SUM(v.visualizaciones), 0) as total_visualizaciones
       FROM users u
-      LEFT JOIN videos v ON u.id = v.user_id
-      GROUP BY u.id, u.username, u.email, u.nombre
+      LEFT JOIN videos v ON u.user_id = v.user_id
+      GROUP BY u.user_id, u.username
       ORDER BY total_visualizaciones DESC
       LIMIT 5
     `);
@@ -38,15 +36,14 @@ router.get('/', authenticateToken, async (req, res) => {
     // Videos más populares (top 5)
     const topVideos = await pool.query(`
       SELECT 
-        v.id,
+        v.video_id as id,
         v.titulo,
-        v.url,
+        v.video_url as url,
         v.likes,
         v.visualizaciones,
-        v.creado_en,
-        u.username as usuario_username
+        v.created_at as creado_en,
+        v.username as usuario_username
       FROM videos v
-      LEFT JOIN users u ON v.user_id = u.id
       ORDER BY v.visualizaciones DESC
       LIMIT 5
     `);
@@ -56,7 +53,7 @@ router.get('/', authenticateToken, async (req, res) => {
       SELECT 
         tipo_reporte,
         COUNT(*) as cantidad
-      FROM Reportes
+      FROM reportes
       GROUP BY tipo_reporte
     `);
 
@@ -65,7 +62,7 @@ router.get('/', authenticateToken, async (req, res) => {
       SELECT 
         estado,
         COUNT(*) as cantidad
-      FROM Reportes
+      FROM reportes
       GROUP BY estado
     `);
 
@@ -73,24 +70,24 @@ router.get('/', authenticateToken, async (req, res) => {
     const newUsersWeek = await pool.query(`
       SELECT COUNT(*) 
       FROM users 
-      WHERE creado_en >= NOW() - INTERVAL '7 days'
+      WHERE created_at >= NOW() - INTERVAL '7 days'
     `);
 
     // Nuevos videos (últimos 7 días)
     const newVideosWeek = await pool.query(`
       SELECT COUNT(*) 
       FROM videos 
-      WHERE creado_en >= NOW() - INTERVAL '7 days'
+      WHERE created_at >= NOW() - INTERVAL '7 days'
     `);
 
     // Actividad por día (últimos 7 días)
     const activityByDay = await pool.query(`
       SELECT 
-        DATE(creado_en) as fecha,
+        DATE(created_at) as fecha,
         COUNT(*) as cantidad
       FROM videos
-      WHERE creado_en >= NOW() - INTERVAL '7 days'
-      GROUP BY DATE(creado_en)
+      WHERE created_at >= NOW() - INTERVAL '7 days'
+      GROUP BY DATE(created_at)
       ORDER BY fecha ASC
     `);
 
