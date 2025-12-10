@@ -609,15 +609,28 @@
         async function fetchUserProfile(username) {
             try {
                 const result = await API.getUserProfile(username);
+                console.log('🔍 [FETCH PROFILE] Respuesta de API.getUserProfile:', result);
                 
                 if (result.success) {
                     currentUser = result.data;
+                    console.log('🔍 [FETCH PROFILE] currentUser guardado:', currentUser);
+                    
+                    // Asegurar que user_id esté disponible
+                    if (currentUser.user_id || currentUser.id) {
+                        const userId = currentUser.user_id || currentUser.id;
+                        currentUser.user_id = userId;
+                        currentUser.id = userId;
+                        console.log('✅ [FETCH PROFILE] user_id disponible en currentUser:', userId);
+                    } else {
+                        console.warn('⚠️ [FETCH PROFILE] user_id NO está disponible en la respuesta');
+                    }
+                    
                     displayProfileData(result.data);
                 } else {
                     throw new Error(result.message || 'Error al obtener datos del perfil.');
                 }
             } catch (error) {
-                console.error("Error fetching profile:", error);
+                console.error("❌ [FETCH PROFILE] Error fetching profile:", error);
                 document.getElementById('profile-username').textContent = 'Error al cargar';
             }
         }
