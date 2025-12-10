@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS Reportes (
     resuelto_por INTEGER, -- ID del admin que resolvió el reporte (referencia a UsersAdmins)
     notas_admin TEXT,
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    actualizado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     
     -- Foreign keys (opcionales, comentados por si las tablas tienen nombres diferentes)
     -- FOREIGN KEY (id_usuario_reportado) REFERENCES users(id) ON DELETE SET NULL,
