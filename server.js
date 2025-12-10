@@ -13,6 +13,7 @@ const messagesRoutes = require('./routes/messages');
 const videosRoutes = require('./routes/videos');
 const analyticsRoutes = require('./routes/analytics');
 const publicReportsRoutes = require('./routes/public-reports');
+const appUsersRoutes = require('./routes/app-users');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,6 +37,7 @@ app.use('/api/messages', messagesRoutes);
 app.use('/api/videos', videosRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/public/reports', publicReportsRoutes); // Endpoint público para reportes desde la app
+app.use('/api/user', appUsersRoutes); // Endpoints públicos de usuarios para la app
 
 // Ruta principal - servir el index.html
 app.get('/', (req, res) => {
