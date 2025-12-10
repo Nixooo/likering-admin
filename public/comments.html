@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comentarios - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="sidebar">
@@ -45,12 +46,31 @@
     </div>
     <div class="main-content">
         <header class="header">
-            <h1>Gestión de Comentarios</h1>
+            <div class="header-content">
+                <div>
+                    <h1>Gestión de Comentarios</h1>
+                    <p>Administra y gestiona todos los comentarios de la plataforma</p>
+                </div>
+            </div>
             <div class="header-actions">
-                <div class="filters">
-                    <input type="text" id="searchInput" placeholder="Buscar por texto o usuario..." class="search-input">
-                    <input type="text" id="videoIdInput" placeholder="ID del video (opcional)" class="search-input">
-                    <button class="btn btn-primary" onclick="loadComments()">Buscar</button>
+                <div class="filters-advanced">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por texto o usuario..." class="search-input-modern">
+                    </div>
+                    <input type="number" id="videoIdInput" placeholder="ID del video" class="filter-select-modern" style="min-width: 150px;">
+                    <select id="sortCommentsFilter" class="filter-select-modern">
+                        <option value="recent">Más recientes</option>
+                        <option value="oldest">Más antiguos</option>
+                        <option value="edited">Editados</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="filter-select-modern">
+                    <button class="btn btn-primary btn-filter" onclick="loadComments()">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <button class="btn btn-secondary btn-filter" onclick="clearCommentFilters()">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
                 </div>
             </div>
         </header>

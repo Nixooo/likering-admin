@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mensajes - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="sidebar">
@@ -45,11 +46,27 @@
     </div>
     <div class="main-content">
         <header class="header">
-            <h1>Gestión de Mensajes</h1>
+            <div class="header-content">
+                <div>
+                    <h1>Gestión de Mensajes</h1>
+                    <p>Administra y gestiona todos los mensajes de la plataforma</p>
+                </div>
+            </div>
             <div class="header-actions">
-                <div class="filters">
-                    <input type="text" id="searchInput" placeholder="Buscar en mensajes..." class="search-input">
-                    <button class="btn btn-primary" onclick="loadMessages()">Buscar</button>
+                <div class="filters-advanced">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar en mensajes..." class="search-input-modern">
+                    </div>
+                    <input type="text" id="senderFilter" placeholder="Remitente (username)" class="search-input-modern" style="min-width: 180px;">
+                    <input type="text" id="receiverFilter" placeholder="Destinatario (username)" class="search-input-modern" style="min-width: 180px;">
+                    <input type="date" id="dateFilter" class="filter-select-modern">
+                    <button class="btn btn-primary btn-filter" onclick="loadMessages()">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <button class="btn btn-secondary btn-filter" onclick="clearMessageFilters()">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
                 </div>
             </div>
         </header>

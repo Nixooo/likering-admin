@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Videos - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="sidebar">
@@ -45,11 +46,32 @@
     </div>
     <div class="main-content">
         <header class="header">
-            <h1>Gestión de Videos</h1>
+            <div class="header-content">
+                <div>
+                    <h1>Gestión de Videos</h1>
+                    <p>Administra y gestiona todos los videos de la plataforma</p>
+                </div>
+            </div>
             <div class="header-actions">
-                <div class="filters">
-                    <input type="text" id="searchInput" placeholder="Buscar por título o usuario..." class="search-input">
-                    <button class="btn btn-primary" onclick="loadVideos()">Buscar</button>
+                <div class="filters-advanced">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por título o usuario..." class="search-input-modern">
+                    </div>
+                    <select id="sortFilter" class="filter-select-modern">
+                        <option value="recent">Más recientes</option>
+                        <option value="popular">Más populares</option>
+                        <option value="likes">Más likes</option>
+                        <option value="views">Más vistas</option>
+                    </select>
+                    <input type="date" id="dateFromFilter" class="filter-select-modern" placeholder="Desde">
+                    <input type="date" id="dateToFilter" class="filter-select-modern" placeholder="Hasta">
+                    <button class="btn btn-primary btn-filter" onclick="loadVideos()">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <button class="btn btn-secondary btn-filter" onclick="clearVideoFilters()">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
                 </div>
             </div>
         </header>

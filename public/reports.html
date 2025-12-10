@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reportes - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="sidebar">
@@ -45,24 +46,45 @@
     </div>
     <div class="main-content">
         <header class="header">
-            <h1>Gestión de Reportes</h1>
+            <div class="header-content">
+                <div>
+                    <h1>Gestión de Reportes</h1>
+                    <p>Administra y gestiona todos los reportes de la plataforma</p>
+                </div>
+            </div>
             <div class="header-actions">
-                <div class="filters">
-                    <select id="statusFilter" class="filter-select">
+                <div class="filters-advanced">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por motivo o descripción..." class="search-input-modern">
+                    </div>
+                    <select id="statusFilter" class="filter-select-modern">
                         <option value="">Todos los estados</option>
                         <option value="pendiente">Pendiente</option>
                         <option value="en_revision">En Revisión</option>
                         <option value="resuelto">Resuelto</option>
                         <option value="rechazado">Rechazado</option>
                     </select>
-                    <select id="typeFilter" class="filter-select">
+                    <select id="typeFilter" class="filter-select-modern">
                         <option value="">Todos los tipos</option>
                         <option value="video">Video</option>
                         <option value="usuario">Usuario</option>
                         <option value="comentario">Comentario</option>
                         <option value="otro">Otro</option>
                     </select>
-                    <button class="btn btn-primary" onclick="loadReports()">Filtrar</button>
+                    <select id="priorityFilter" class="filter-select-modern">
+                        <option value="">Todas las prioridades</option>
+                        <option value="alta">Alta</option>
+                        <option value="media">Media</option>
+                        <option value="baja">Baja</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="filter-select-modern">
+                    <button class="btn btn-primary btn-filter" onclick="loadReports()">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                    <button class="btn btn-secondary btn-filter" onclick="clearReportFilters()">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
                 </div>
             </div>
         </header>

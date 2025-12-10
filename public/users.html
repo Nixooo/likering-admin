@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Usuarios - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="sidebar">
@@ -45,16 +46,39 @@
     </div>
     <div class="main-content">
         <header class="header">
-            <h1>Gestión de Usuarios</h1>
+            <div class="header-content">
+                <div>
+                    <h1>Gestión de Usuarios</h1>
+                    <p>Administra y gestiona todos los usuarios de la plataforma</p>
+                </div>
+            </div>
             <div class="header-actions">
-                <div class="filters">
-                    <input type="text" id="searchInput" placeholder="Buscar por nombre, email o username..." class="search-input">
-                    <select id="statusFilter" class="filter-select">
+                <div class="filters-advanced">
+                    <div class="search-wrapper">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por username..." class="search-input-modern">
+                    </div>
+                    <select id="statusFilter" class="filter-select-modern">
                         <option value="">Todos los estados</option>
                         <option value="Activo">Activos</option>
                         <option value="Desactivo">Inactivos</option>
                     </select>
-                    <button class="btn btn-primary" onclick="loadUsers()">Buscar</button>
+                    <select id="planFilter" class="filter-select-modern">
+                        <option value="">Todos los planes</option>
+                        <option value="azul">Azul</option>
+                        <option value="rojo">Rojo</option>
+                        <option value="naranja">Naranja</option>
+                        <option value="verde">Verde</option>
+                        <option value="morado">Morado</option>
+                        <option value="negro">Negro</option>
+                        <option value="amarillo">Amarillo</option>
+                    </select>
+                    <button class="btn btn-primary btn-filter" onclick="loadUsers()">
+                        <i class="fas fa-search"></i> Buscar
+                    </button>
+                    <button class="btn btn-secondary btn-filter" onclick="clearFilters()">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
                 </div>
             </div>
         </header>
@@ -90,12 +114,25 @@
     
     <!-- Modal de Detalles de Usuario -->
     <div class="modal" id="userDetailsModal">
-        <div class="modal-content">
+        <div class="modal-content modal-large">
             <div class="modal-header-custom">
                 <h2>Detalles del Usuario</h2>
                 <span class="modal-close" onclick="closeUserDetailsModal()">&times;</span>
             </div>
             <div class="modal-body" id="userDetailsContent">
+                <!-- Contenido se llena dinámicamente -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Edición de Usuario -->
+    <div class="modal" id="userEditModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header-custom">
+                <h2>Editar Usuario</h2>
+                <span class="modal-close" onclick="closeUserEditModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="userEditContent">
                 <!-- Contenido se llena dinámicamente -->
             </div>
         </div>
