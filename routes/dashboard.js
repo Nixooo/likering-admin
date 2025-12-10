@@ -7,64 +7,98 @@ const router = express.Router();
 // Obtener estadísticas del dashboard
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    // Estadísticas generales
-    const totalUsers = await pool.query('SELECT COUNT(*) FROM users');
-    const activeUsers = await pool.query('SELECT COUNT(*) FROM users'); // Ajustar si hay columna activo
-    const totalVideos = await pool.query('SELECT COUNT(*) FROM videos');
-    const totalReports = await pool.query('SELECT COUNT(*) FROM reportes');
-    const pendingReports = await pool.query("SELECT COUNT(*) FROM reportes WHERE estado = 'pendiente'");
+    // Estadísticas generales - con manejo de errores individual
+    let totalUsers = { rows: [{ count: '0' }] };
+    let activeUsers = { rows: [{ count: '0' }] };
+    let totalVideos = { rows: [{ count: '0' }] };
+    let totalReports = { rows: [{ count: '0' }] };
+    let pendingReports = { rows: [{ count: '0' }] };
+
+    try {
+      totalUsers = await pool.query('SELECT COUNT(*) FROM users');
+      activeUsers = await pool.query('SELECT COUNT(*) FROM users');
+      totalVideos = await pool.query('SELECT COUNT(*) FROM videos');
+      totalReports = await pool.query('SELECT COUNT(*) FROM reportes');
+      pendingReports = await pool.query("SELECT COUNT(*) FROM reportes WHERE estado = 'pendiente'");
+    } catch (err) {
+      console.error('Error en estadísticas generales:', err.message);
+    }
 
     // Estadísticas de likes y visualizaciones
-    const likesStats = await pool.query('SELECT COALESCE(SUM(likes), 0) as total_likes FROM videos');
-    const viewsStats = await pool.query('SELECT COALESCE(SUM(visualizaciones), 0) as total_visualizaciones FROM videos');
+    let likesStats = { rows: [{ total_likes: '0' }] };
+    let viewsStats = { rows: [{ total_visualizaciones: '0' }] };
+    
+    try {
+      likesStats = await pool.query('SELECT COALESCE(SUM(likes), 0) as total_likes FROM videos');
+      viewsStats = await pool.query('SELECT COALESCE(SUM(visualizaciones), 0) as total_visualizaciones FROM videos');
+    } catch (err) {
+      console.error('Error en estadísticas de likes/visualizaciones:', err.message);
+    }
 
     // Usuarios más activos (top 5)
-    const topUsers = await pool.query(`
-      SELECT 
-        u.user_id as id,
-        u.username,
-        COUNT(DISTINCT v.video_id) as total_videos,
-        COALESCE(SUM(v.likes), 0) as total_likes,
-        COALESCE(SUM(v.visualizaciones), 0) as total_visualizaciones
-      FROM users u
-      LEFT JOIN videos v ON u.user_id = v.user_id
-      GROUP BY u.user_id, u.username
-      ORDER BY total_visualizaciones DESC
-      LIMIT 5
-    `);
+    let topUsers = { rows: [] };
+    try {
+      topUsers = await pool.query(`
+        SELECT 
+          u.user_id as id,
+          u.username,
+          COUNT(DISTINCT v.video_id) as total_videos,
+          COALESCE(SUM(v.likes), 0) as total_likes,
+          COALESCE(SUM(v.visualizaciones), 0) as total_visualizaciones
+        FROM users u
+        LEFT JOIN videos v ON u.user_id = v.user_id
+        GROUP BY u.user_id, u.username
+        ORDER BY total_visualizaciones DESC NULLS LAST
+        LIMIT 5
+      `);
+    } catch (err) {
+      console.error('Error en top usuarios:', err.message);
+    }
 
     // Videos más populares (top 5)
-    const topVideos = await pool.query(`
-      SELECT 
-        v.video_id as id,
-        v.titulo,
-        v.video_url as url,
-        v.likes,
-        v.visualizaciones,
-        v.created_at as creado_en,
-        v.username as usuario_username
-      FROM videos v
-      ORDER BY v.visualizaciones DESC
-      LIMIT 5
-    `);
+    let topVideos = { rows: [] };
+    try {
+      topVideos = await pool.query(`
+        SELECT 
+          v.video_id as id,
+          v.titulo,
+          v.video_url as url,
+          v.likes,
+          v.visualizaciones,
+          v.created_at as creado_en,
+          v.username as usuario_username
+        FROM videos v
+        WHERE v.visualizaciones IS NOT NULL
+        ORDER BY v.visualizaciones DESC
+        LIMIT 5
+      `);
+    } catch (err) {
+      console.error('Error en top videos:', err.message);
+    }
 
     // Reportes por tipo
-    const reportsByType = await pool.query(`
-      SELECT 
-        tipo_reporte,
-        COUNT(*) as cantidad
-      FROM reportes
-      GROUP BY tipo_reporte
-    `);
+    let reportsByType = { rows: [] };
+    let reportsByStatus = { rows: [] };
+    
+    try {
+      reportsByType = await pool.query(`
+        SELECT 
+          tipo_reporte,
+          COUNT(*) as cantidad
+        FROM reportes
+        GROUP BY tipo_reporte
+      `);
 
-    // Reportes por estado
-    const reportsByStatus = await pool.query(`
-      SELECT 
-        estado,
-        COUNT(*) as cantidad
-      FROM reportes
-      GROUP BY estado
-    `);
+      reportsByStatus = await pool.query(`
+        SELECT 
+          estado,
+          COUNT(*) as cantidad
+        FROM reportes
+        GROUP BY estado
+      `);
+    } catch (err) {
+      console.error('Error en reportes:', err.message);
+    }
 
     // Nuevos usuarios (últimos 7 días) - Manejo si no existe created_at
     let newUsersWeek;
@@ -80,22 +114,28 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 
     // Nuevos videos (últimos 7 días)
-    const newVideosWeek = await pool.query(`
-      SELECT COUNT(*) 
-      FROM videos 
-      WHERE created_at >= NOW() - INTERVAL '7 days'
-    `);
+    let newVideosWeek = { rows: [{ count: '0' }] };
+    let activityByDay = { rows: [] };
+    
+    try {
+      newVideosWeek = await pool.query(`
+        SELECT COUNT(*) 
+        FROM videos 
+        WHERE created_at >= NOW() - INTERVAL '7 days'
+      `);
 
-    // Actividad por día (últimos 7 días)
-    const activityByDay = await pool.query(`
-      SELECT 
-        DATE(created_at) as fecha,
-        COUNT(*) as cantidad
-      FROM videos
-      WHERE created_at >= NOW() - INTERVAL '7 days'
-      GROUP BY DATE(created_at)
-      ORDER BY fecha ASC
-    `);
+      activityByDay = await pool.query(`
+        SELECT 
+          DATE(created_at) as fecha,
+          COUNT(*) as cantidad
+        FROM videos
+        WHERE created_at >= NOW() - INTERVAL '7 days'
+        GROUP BY DATE(created_at)
+        ORDER BY fecha ASC
+      `);
+    } catch (err) {
+      console.error('Error en estadísticas de videos semanales:', err.message);
+    }
 
     res.json({
       general: {
