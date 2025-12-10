@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Likering Admin</title>
     <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <div class="sidebar">
@@ -90,6 +91,20 @@
                 <div class="dashboard-card">
                     <h2>Top 5 Videos Más Vistos</h2>
                     <div id="topVideos" class="list-container"></div>
+                </div>
+            </div>
+            <div class="dashboard-grid">
+                <div class="dashboard-card chart-card">
+                    <h2>Usuarios por Plan</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="usersByPlanChart"></canvas>
+                    </div>
+                </div>
+                <div class="dashboard-card chart-card">
+                    <h2>Crecimiento de Usuarios</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="usersByDateChart"></canvas>
+                    </div>
                 </div>
             </div>
             <div class="dashboard-grid">

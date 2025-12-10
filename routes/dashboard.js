@@ -35,19 +35,21 @@ router.get('/', authenticateToken, async (req, res) => {
       console.error('Error en estadísticas de likes/visualizaciones:', err.message);
     }
 
-    // Usuarios más activos (top 5)
+    // Usuarios más activos (top 5) con foto de perfil
     let topUsers = { rows: [] };
     try {
       topUsers = await pool.query(`
         SELECT 
           u.user_id as id,
           u.username,
+          u.image_url,
+          u.plan,
           COUNT(DISTINCT v.video_id) as total_videos,
           COALESCE(SUM(v.likes), 0) as total_likes,
           COALESCE(SUM(v.visualizaciones), 0) as total_visualizaciones
         FROM users u
         LEFT JOIN videos v ON u.user_id = v.user_id
-        GROUP BY u.user_id, u.username
+        GROUP BY u.user_id, u.username, u.image_url, u.plan
         ORDER BY total_visualizaciones DESC NULLS LAST
         LIMIT 5
       `);
@@ -55,7 +57,7 @@ router.get('/', authenticateToken, async (req, res) => {
       console.error('Error en top usuarios:', err.message);
     }
 
-    // Videos más populares (top 5)
+    // Videos más populares (top 5) con portada
     let topVideos = { rows: [] };
     try {
       topVideos = await pool.query(`
@@ -63,6 +65,7 @@ router.get('/', authenticateToken, async (req, res) => {
           v.video_id as id,
           v.titulo,
           v.video_url as url,
+          v.thumbnail_url,
           v.likes,
           v.visualizaciones,
           v.created_at as creado_en,
@@ -155,7 +158,9 @@ router.get('/', authenticateToken, async (req, res) => {
       topVideos: topVideos.rows,
       reportesPorTipo: reportsByType.rows,
       reportesPorEstado: reportsByStatus.rows,
-      actividadPorDia: activityByDay.rows
+      actividadPorDia: activityByDay.rows,
+      usuariosPorPlan: usersByPlan.rows,
+      usuariosPorFecha: usersByDate.rows
     });
   } catch (error) {
     console.error('Error al obtener estadísticas del dashboard:', error);

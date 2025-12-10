@@ -1,4 +1,6 @@
 let dashboardData = null;
+let usersByPlanChart = null;
+let usersByDateChart = null;
 
 // Cargar datos del dashboard
 async function loadDashboard() {
@@ -33,32 +35,56 @@ function updateDashboardUI(data) {
     document.getElementById('reportesPendientes').textContent = `${data.general.reportesPendientes} pendientes`;
     document.getElementById('nuevosUsuarios').textContent = data.estaSemana.nuevosUsuarios.toLocaleString();
 
-    // Top usuarios
+    // Top usuarios con fotos de perfil
     const topUsersContainer = document.getElementById('topUsers');
     if (data.topUsuarios.length === 0) {
-        topUsersContainer.innerHTML = '<p>No hay datos disponibles</p>';
+        topUsersContainer.innerHTML = '<p class="no-data">No hay datos disponibles</p>';
     } else {
         topUsersContainer.innerHTML = data.topUsuarios.map((user, index) => `
-            <div class="list-item">
-                <h4>${index + 1}. ${user.username || user.email}</h4>
-                <p><strong>Videos:</strong> ${user.total_videos || 0}</p>
-                <p><strong>Likes:</strong> ${(user.total_likes || 0).toLocaleString()}</p>
-                <p><strong>Visualizaciones:</strong> ${(user.total_visualizaciones || 0).toLocaleString()}</p>
+            <div class="user-card">
+                <div class="user-rank">#${index + 1}</div>
+                <div class="user-avatar">
+                    <img src="${user.image_url || 'https://via.placeholder.com/60?text=' + (user.username ? user.username.charAt(0).toUpperCase() : 'U')}" 
+                         alt="${user.username}" 
+                         onerror="this.src='https://ui-avatars.com/api/?name=${user.username || 'User'}&background=3b82f6&color=fff&size=128'">
+                </div>
+                <div class="user-info">
+                    <h4>${user.username || 'Sin nombre'}</h4>
+                    <span class="user-plan">Plan: ${user.plan || 'N/A'}</span>
+                    <div class="user-stats">
+                        <span><strong>${user.total_videos || 0}</strong> videos</span>
+                        <span><strong>${(user.total_likes || 0).toLocaleString()}</strong> likes</span>
+                        <span><strong>${(user.total_visualizaciones || 0).toLocaleString()}</strong> views</span>
+                    </div>
+                </div>
             </div>
         `).join('');
     }
 
-    // Top videos
+    // Top videos con portadas
     const topVideosContainer = document.getElementById('topVideos');
     if (data.topVideos.length === 0) {
-        topVideosContainer.innerHTML = '<p>No hay datos disponibles</p>';
+        topVideosContainer.innerHTML = '<p class="no-data">No hay datos disponibles</p>';
     } else {
         topVideosContainer.innerHTML = data.topVideos.map((video, index) => `
-            <div class="list-item">
-                <h4>${index + 1}. ${video.titulo || 'Sin título'}</h4>
-                <p><strong>Usuario:</strong> ${video.usuario_username || 'N/A'}</p>
-                <p><strong>Likes:</strong> ${(video.likes || 0).toLocaleString()}</p>
-                <p><strong>Visualizaciones:</strong> ${(video.visualizaciones || 0).toLocaleString()}</p>
+            <div class="video-card">
+                <div class="video-rank">#${index + 1}</div>
+                <div class="video-thumbnail">
+                    <img src="${video.thumbnail_url || 'https://via.placeholder.com/160x90?text=Video'}" 
+                         alt="${video.titulo || 'Video'}"
+                         onerror="this.src='https://via.placeholder.com/160x90/1e293b/94a3b8?text=Video'">
+                    <div class="video-overlay">
+                        <span class="video-views">👁️ ${(video.visualizaciones || 0).toLocaleString()}</span>
+                    </div>
+                </div>
+                <div class="video-info">
+                    <h4 title="${video.titulo || 'Sin título'}">${(video.titulo || 'Sin título').substring(0, 40)}${(video.titulo || '').length > 40 ? '...' : ''}</h4>
+                    <p class="video-author">@${video.usuario_username || 'N/A'}</p>
+                    <div class="video-stats">
+                        <span>❤️ ${(video.likes || 0).toLocaleString()}</span>
+                        <span>👁️ ${(video.visualizaciones || 0).toLocaleString()}</span>
+                    </div>
+                </div>
             </div>
         `).join('');
     }
@@ -99,6 +125,176 @@ function updateDashboardUI(data) {
             `;
         }).join('');
     }
+
+    // Renderizar gráfica de usuarios por plan
+    renderUsersByPlanChart(data.usuariosPorPlan || []);
+    
+    // Renderizar gráfica de usuarios por fecha
+    renderUsersByDateChart(data.usuariosPorFecha || []);
+}
+
+// Renderizar gráfica de pastel para usuarios por plan
+function renderUsersByPlanChart(data) {
+    const ctx = document.getElementById('usersByPlanChart');
+    if (!ctx) return;
+
+    if (usersByPlanChart) {
+        usersByPlanChart.destroy();
+    }
+
+    const labels = data.map(item => item.plan || 'Sin plan');
+    const values = data.map(item => parseInt(item.cantidad));
+
+    usersByPlanChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(139, 92, 246, 0.8)',
+                    'rgba(96, 165, 250, 0.8)',
+                    'rgba(167, 139, 250, 0.8)',
+                    'rgba(79, 70, 229, 0.8)',
+                    'rgba(124, 58, 237, 0.8)',
+                ],
+                borderColor: [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(139, 92, 246, 1)',
+                    'rgba(96, 165, 250, 1)',
+                    'rgba(167, 139, 250, 1)',
+                    'rgba(79, 70, 229, 1)',
+                    'rgba(124, 58, 237, 1)',
+                ],
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#cbd5e1',
+                        padding: 15,
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                    titleColor: '#f1f5f9',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#334155',
+                    borderWidth: 1,
+                    padding: 12,
+                    displayColors: true
+                }
+            }
+        }
+    });
+}
+
+// Renderizar gráfica de líneas para usuarios por fecha
+function renderUsersByDateChart(data) {
+    const ctx = document.getElementById('usersByDateChart');
+    if (!ctx) return;
+
+    if (usersByDateChart) {
+        usersByDateChart.destroy();
+    }
+
+    // Si no hay datos, crear datos vacíos para los últimos 30 días
+    let labels = [];
+    let values = [];
+
+    if (data.length > 0) {
+        labels = data.map(item => {
+            const date = new Date(item.fecha);
+            return date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' });
+        });
+        values = data.map(item => parseInt(item.cantidad));
+    } else {
+        // Crear array de últimos 30 días
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            labels.push(date.toLocaleDateString('es-ES', { month: 'short', day: 'numeric' }));
+            values.push(0);
+        }
+    }
+
+    usersByDateChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Nuevos Usuarios',
+                data: values,
+                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+                pointBorderColor: '#0f172a',
+                pointBorderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        color: '#cbd5e1',
+                        font: {
+                            size: 12,
+                            weight: '500'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                    titleColor: '#f1f5f9',
+                    bodyColor: '#cbd5e1',
+                    borderColor: '#334155',
+                    borderWidth: 1,
+                    padding: 12
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#94a3b8',
+                        maxRotation: 45,
+                        minRotation: 45
+                    },
+                    grid: {
+                        color: 'rgba(51, 65, 85, 0.3)'
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#94a3b8',
+                        stepSize: 1
+                    },
+                    grid: {
+                        color: 'rgba(51, 65, 85, 0.3)'
+                    }
+                }
+            }
+        }
+    });
 }
 
 // Cargar dashboard al iniciar

@@ -55,10 +55,29 @@ async function createAdmin() {
         console.log('\n💡 Ya puedes iniciar sesión en el panel de administración\n');
 
     } catch (error) {
-        console.error('\n❌ Error al crear administrador:', error.message);
+        console.error('\n❌ Error al crear administrador:');
+        console.error(`   Mensaje: ${error.message}`);
+        if (error.code) {
+            console.error(`   Código: ${error.code}`);
+        }
+        
         if (error.code === '23505') {
             console.error('   El correo electrónico ya está en uso');
+        } else if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+            console.error('\n💡 Error de conexión a la base de datos:');
+            console.error('   - Verifica que el archivo .env esté configurado correctamente');
+            console.error('   - Verifica que la base de datos sea accesible');
+            console.error(`   - Host: ${process.env.DB_HOST || 'NO CONFIGURADO'}`);
+            console.error(`   - Port: ${process.env.DB_PORT || 'NO CONFIGURADO'}`);
+        } else if (error.message.includes('relation') || error.message.includes('does not exist')) {
+            console.error('\n💡 Error: La tabla UsersAdmins no existe');
+            console.error('   - Ejecuta primero el script SQL para crear las tablas');
+            console.error('   - O ejecuta: npm run init-db');
         }
+        
+        console.error('\n📋 Detalles completos del error:');
+        console.error(error);
+        
         process.exit(1);
     } finally {
         readline.close();
