@@ -109,16 +109,17 @@ async function toggleUserStatus(userId, newEstado) {
         if (!response) return;
 
         if (!response.ok) {
-            const data = await response.json();
-            alert(data.error || 'Error al actualizar usuario');
+            const errorData = await response.json().catch(() => ({}));
+            alert(errorData.error || 'Error al actualizar el estado del usuario');
             return;
         }
 
+        const result = await response.json();
         alert(`Usuario ${estadoTexto}do correctamente`);
         loadUsers(currentPage);
     } catch (error) {
         console.error('Error al cambiar estado:', error);
-        alert('Error al cambiar el estado del usuario');
+        alert('Error al cambiar el estado del usuario: ' + error.message);
     }
 }
 

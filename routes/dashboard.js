@@ -60,7 +60,7 @@ router.get('/', authenticateToken, async (req, res) => {
           COALESCE(SUM(v.visualizaciones), 0) as total_visualizaciones
         FROM users u
         LEFT JOIN videos v ON u.user_id = v.user_id
-        GROUP BY u.user_id, u.username, u.image_url, u.plan
+        GROUP BY u.user_id, u.username, u.image_url, u.plan, u.estado, u.created_at, u.updated_at
         ORDER BY total_visualizaciones DESC NULLS LAST
         LIMIT 5
       `);
