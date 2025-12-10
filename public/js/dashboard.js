@@ -34,6 +34,10 @@ function updateDashboardUI(data) {
     document.getElementById('totalReportes').textContent = data.general.totalReportes.toLocaleString();
     document.getElementById('reportesPendientes').textContent = `${data.general.reportesPendientes} pendientes`;
     document.getElementById('nuevosUsuarios').textContent = data.estaSemana.nuevosUsuarios.toLocaleString();
+    document.getElementById('totalComentarios').textContent = (data.general.totalComentarios || 0).toLocaleString();
+    document.getElementById('totalSeguimientos').textContent = (data.general.totalSeguimientos || 0).toLocaleString();
+    document.getElementById('totalMensajes').textContent = (data.general.totalMensajes || 0).toLocaleString();
+    document.getElementById('usuariosDesactivados').textContent = (data.general.usuariosDesactivados || 0).toLocaleString();
 
     // Top usuarios con fotos de perfil
     const topUsersContainer = document.getElementById('topUsers');

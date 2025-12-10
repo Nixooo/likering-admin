@@ -14,12 +14,23 @@ router.get('/', authenticateToken, async (req, res) => {
     let totalReports = { rows: [{ count: '0' }] };
     let pendingReports = { rows: [{ count: '0' }] };
 
+    let inactiveUsers = { rows: [{ count: '0' }] };
+    let totalComments = { rows: [{ count: '0' }] };
+    let totalFollows = { rows: [{ count: '0' }] };
+    let totalMessages = { rows: [{ count: '0' }] };
+
     try {
       totalUsers = await pool.query('SELECT COUNT(*) FROM users');
-      activeUsers = await pool.query("SELECT COUNT(*) FROM users WHERE estado = 'Activo'");
+      activeUsers = await pool.query("SELECT COUNT(*) FROM users WHERE estado = 'Activo' OR estado IS NULL");
+      inactiveUsers = await safeQuery("SELECT COUNT(*) FROM users WHERE estado = 'Desactivo'", [], [{ count: '0' }]);
       totalVideos = await pool.query('SELECT COUNT(*) FROM videos');
       totalReports = await pool.query('SELECT COUNT(*) FROM reportes');
       pendingReports = await pool.query("SELECT COUNT(*) FROM reportes WHERE estado = 'pendiente'");
+      
+      // Estadísticas adicionales
+      totalComments = await safeQuery('SELECT COUNT(*) FROM comments', [], [{ count: '0' }]);
+      totalFollows = await safeQuery('SELECT COUNT(*) FROM follows', [], [{ count: '0' }]);
+      totalMessages = await safeQuery('SELECT COUNT(*) FROM messages', [], [{ count: '0' }]);
     } catch (err) {
       console.error('Error en estadísticas generales:', err.message);
     }
@@ -175,11 +186,15 @@ router.get('/', authenticateToken, async (req, res) => {
       general: {
         totalUsuarios: parseInt(totalUsers.rows[0].count),
         usuariosActivos: parseInt(activeUsers.rows[0].count),
+        usuariosDesactivados: parseInt(inactiveUsers.rows?.[0]?.count || '0'),
         totalVideos: parseInt(totalVideos.rows[0].count),
         totalReportes: parseInt(totalReports.rows[0].count),
         reportesPendientes: parseInt(pendingReports.rows[0].count),
         totalLikes: parseInt(likesStats.rows[0].total_likes),
-        totalVisualizaciones: parseInt(viewsStats.rows[0].total_visualizaciones)
+        totalVisualizaciones: parseInt(viewsStats.rows[0].total_visualizaciones),
+        totalComentarios: parseInt(totalComments.rows?.[0]?.count || '0'),
+        totalSeguimientos: parseInt(totalFollows.rows?.[0]?.count || '0'),
+        totalMensajes: parseInt(totalMessages.rows?.[0]?.count || '0')
       },
       estaSemana: {
         nuevosUsuarios: parseInt(newUsersWeek.rows[0].count),

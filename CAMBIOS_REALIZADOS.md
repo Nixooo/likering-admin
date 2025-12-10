@@ -21,44 +21,20 @@
 - ✅ Verificación de estado en login
 - ✅ Envío de estado 'Activo' al registrar (el backend debe establecerlo)
 
-## ⚠️ Cambios Pendientes
+## ✅ Cambios Pendientes Completados
 
-### 1. Agregar Funcionalidad de Reportar en streamer.html
+### 1. ✅ Funcionalidad de Reportar en streamer.html - COMPLETADO
+- ✅ Botón "Reportar" agregado después del botón "Compartir"
+- ✅ Estilos CSS agregados con efecto hover
+- ✅ Modal de reporte completo con selector de motivo y descripción
+- ✅ JavaScript para enviar reportes al endpoint `/api/public/reports`
+- ✅ Validaciones y mensajes de confirmación
 
-Agregar después del botón "Compartir" (línea ~514):
-
-```html
-<button class="report-btn" id="report-btn">
-    <i class="fas fa-flag"></i> Reportar
-</button>
-```
-
-Agregar estilos CSS:
-
-```css
-.report-btn {
-    background: var(--light-grey);
-    color: var(--text-primary);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-.report-btn:hover {
-    background: rgba(239, 68, 68, 0.2);
-    color: #ef4444;
-}
-```
-
-Agregar modal de reporte (similar al modal de compartir existente) y JavaScript para enviar el reporte a `/api/public/reports`
-
-### 2. Agregar Funcionalidad de Reportar en videos.html
-
-Agregar en el menú de opciones (línea ~765), después de "Descargar":
-
-```html
-<li id="report-video-btn"><i class="fas fa-flag"></i><span>Reportar</span></li>
-```
-
-Agregar modal de reporte y JavaScript para enviar el reporte incluyendo `id_video_reportado`.
+### 2. ✅ Funcionalidad de Reportar en videos.html - COMPLETADO
+- ✅ Opción "Reportar" agregada en el menú de opciones
+- ✅ Modal de reporte completo
+- ✅ JavaScript para enviar reportes incluyendo `id_video_reportado`
+- ✅ El backend obtiene automáticamente el `user_id` del video reportado
 
 ### 3. Mejorar Dashboard
 
