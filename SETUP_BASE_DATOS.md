@@ -20,7 +20,7 @@ Si obtienes el error `ECONNREFUSED` al ejecutar `npm run init-db`, significa que
    - **Port**: `12691`
    - **Database**: `defaultdb`
    - **User**: `avnadmin`
-   - **Password**: `AVNS_h_rc54oNmOHe1_gr9tC`
+   - **Password**: `[TU_CONTRASEÑA_DE_BASE_DE_DATOS]`
    - **SSL**: Habilitado (Required)
 
 3. **Ejecuta el script SQL:**
@@ -37,7 +37,7 @@ DB_HOST=likering-db-nixoooo14.g.aivencloud.com
 DB_PORT=12691
 DB_NAME=defaultdb
 DB_USER=avnadmin
-DB_PASSWORD=AVNS_h_rc54oNmOHe1_gr9tC
+DB_PASSWORD=[TU_CONTRASEÑA_DE_BASE_DE_DATOS]
 DB_SSL=true
 PORT=3000
 NODE_ENV=development

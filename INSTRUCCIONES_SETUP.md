@@ -59,7 +59,7 @@ Luego visita: http://localhost:3000
    DB_PORT=12691
    DB_NAME=defaultdb
    DB_USER=avnadmin
-   DB_PASSWORD=AVNS_h_rc54oNmOHe1_gr9tC
+   DB_PASSWORD=[TU_CONTRASEÑA_DE_BASE_DE_DATOS]
    DB_SSL=true
    JWT_SECRET=[Genera uno seguro con: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"]
    ```
