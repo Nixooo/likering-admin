@@ -47,13 +47,8 @@ router.get('/', authenticateToken, async (req, res) => {
     if (conditions.length > 0) {
       countQuery += ' WHERE ' + conditions.join(' AND ');
     }
-    const countResult = await pool.query(
-      countQuery.replace(/\$\d+/g, (match, offset, string) => {
-        const num = parseInt(match.substring(1)) - (search ? 1 : 0) - (estado ? 1 : 0);
-        return match;
-      }),
-      params.slice(0, params.length - 2)
-    );
+    const countParams = params.slice(0, params.length - 2);
+    const countResult = await pool.query(countQuery, countParams);
 
     res.json({
       users: result.rows,
