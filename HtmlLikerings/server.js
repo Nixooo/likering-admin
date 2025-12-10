@@ -244,24 +244,37 @@ app.get('/api/user/profile', async (req, res) => {
         );
         const likesCount = parseInt(likesResult.rows[0].total_likes) || 0;
 
-        // Asegurar que tengamos el user_id
-        const userId = userData.user_id || userData.id;
+        // IMPORTANTE: La tabla users usa 'id', NO 'user_id'
+        // Normalizar: obtener id (campo real) y crear user_id (para compatibilidad)
+        const userId = userData.id || userData.user_id;
         
-        // Si todavía no tenemos user_id, intentar obtenerlo directamente de la base de datos
+        console.log('🔍 [GET PROFILE] userData después de getUserByUsername:', {
+            username: userData.username,
+            id: userData.id,
+            user_id: userData.user_id,
+            hasId: !!userData.id,
+            hasUser_id: !!userData.user_id
+        });
+
         let finalUserId = userId;
         if (!finalUserId) {
+            // Si no hay ID, intentar obtenerlo directamente (no debería pasar)
             try {
                 const idResult = await pool.query(
-                    'SELECT user_id, id FROM users WHERE username = $1',
+                    'SELECT id FROM users WHERE username = $1',
                     [user]
                 );
                 if (idResult.rows.length > 0) {
-                    finalUserId = idResult.rows[0].user_id || idResult.rows[0].id;
-                    console.log('🔍 [GET PROFILE] user_id obtenido directamente de BD:', finalUserId);
+                    finalUserId = idResult.rows[0].id;
+                    console.log('🔍 [GET PROFILE] id obtenido directamente de BD:', finalUserId);
                 }
             } catch (err) {
-                console.error('❌ [GET PROFILE] Error al obtener user_id:', err);
+                console.error('❌ [GET PROFILE] Error al obtener id:', err);
             }
+        }
+        
+        if (!finalUserId) {
+            console.error('❌ [GET PROFILE] ERROR: No se pudo obtener el ID del usuario:', user);
         }
 
         const responseData = {
