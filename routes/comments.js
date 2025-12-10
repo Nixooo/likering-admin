@@ -51,8 +51,8 @@ router.get('/', authenticateToken, async (req, res) => {
     if (sort === 'oldest') {
       orderBy = 'c.created_at ASC';
     } else if (sort === 'edited') {
-      conditions.push('c.updated_at IS NOT NULL AND c.updated_at != c.created_at');
-      orderBy = 'c.updated_at DESC';
+      // Filtrar solo comentarios editados si es necesario
+      orderBy = 'c.updated_at DESC NULLS LAST';
     }
 
     query += ` ORDER BY ${orderBy} LIMIT $${paramCount} OFFSET $${paramCount + 1}`;

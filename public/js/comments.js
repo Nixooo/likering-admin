@@ -161,6 +161,15 @@ function clearCommentFilters() {
     loadComments(1);
 }
 
+// Limpiar filtros de comentarios
+function clearCommentFilters() {
+    if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
+    if (document.getElementById('videoIdInput')) document.getElementById('videoIdInput').value = '';
+    if (document.getElementById('sortCommentsFilter')) document.getElementById('sortCommentsFilter').value = 'recent';
+    if (document.getElementById('dateFilter')) document.getElementById('dateFilter').value = '';
+    loadComments(1);
+}
+
 // Cargar comentarios al iniciar
 if (window.location.pathname.includes('comments.html')) {
     loadComments();
