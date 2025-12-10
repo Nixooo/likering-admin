@@ -7,7 +7,8 @@ async function loadDashboard() {
         if (!response) return;
 
         if (!response.ok) {
-            throw new Error('Error al cargar datos');
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
         }
 
         dashboardData = await response.json();

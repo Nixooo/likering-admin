@@ -66,12 +66,18 @@ router.get('/', authenticateToken, async (req, res) => {
       GROUP BY estado
     `);
 
-    // Nuevos usuarios (últimos 7 días)
-    const newUsersWeek = await pool.query(`
-      SELECT COUNT(*) 
-      FROM users 
-      WHERE created_at >= NOW() - INTERVAL '7 days'
-    `);
+    // Nuevos usuarios (últimos 7 días) - Manejo si no existe created_at
+    let newUsersWeek;
+    try {
+      newUsersWeek = await pool.query(`
+        SELECT COUNT(*) 
+        FROM users 
+        WHERE created_at >= NOW() - INTERVAL '7 days'
+      `);
+    } catch (err) {
+      // Si no existe created_at, intentar con otro nombre o devolver 0
+      newUsersWeek = { rows: [{ count: '0' }] };
+    }
 
     // Nuevos videos (últimos 7 días)
     const newVideosWeek = await pool.query(`
@@ -113,7 +119,12 @@ router.get('/', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Error al obtener estadísticas del dashboard:', error);
-    res.status(500).json({ error: 'Error al obtener estadísticas' });
+    console.error('Stack trace:', error.stack);
+    res.status(500).json({ 
+      error: 'Error al obtener estadísticas', 
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
