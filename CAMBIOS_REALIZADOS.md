@@ -36,13 +36,10 @@
 - ✅ JavaScript para enviar reportes incluyendo `id_video_reportado`
 - ✅ El backend obtiene automáticamente el `user_id` del video reportado
 
-### 3. Mejorar Dashboard
-
-El dashboard ya está funcional, pero puedes agregar más métricas importantes como:
-- Usuarios activos vs desactivados
-- Tasa de crecimiento de usuarios
-- Reportes más recientes
-- Actividad de la última hora/día
+### 3. ✅ Mejorar Dashboard - COMPLETADO
+- ✅ Agregadas métricas adicionales: Total Comentarios, Total Seguimientos, Total Mensajes
+- ✅ Agregada tarjeta de Usuarios Desactivados
+- ✅ Dashboard ahora muestra datos más completos y útiles sobre la app
 
 ## 📝 Notas Importantes
 
