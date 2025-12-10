@@ -24,6 +24,22 @@ router.post('/', async (req, res) => {
       });
     }
 
+    // Si es un reporte de video, intentar obtener el user_id del video
+    let finalUserIdReportado = id_usuario_reportado || null;
+    if (tipo_reporte === 'video' && id_video_reportado && !finalUserIdReportado) {
+      try {
+        const videoResult = await pool.query(
+          'SELECT user_id FROM videos WHERE video_id = $1',
+          [id_video_reportado]
+        );
+        if (videoResult.rows.length > 0) {
+          finalUserIdReportado = videoResult.rows[0].user_id;
+        }
+      } catch (err) {
+        console.error('Error al obtener user_id del video:', err);
+      }
+    }
+
     const result = await pool.query(
       `INSERT INTO reportes 
        (tipo_reporte, id_usuario_reportado, id_video_reportado, id_usuario_reporter, motivo, descripcion, estado, prioridad)
@@ -31,7 +47,7 @@ router.post('/', async (req, res) => {
        RETURNING *`,
       [
         tipo_reporte, 
-        id_usuario_reportado || null, 
+        finalUserIdReportado, 
         id_video_reportado || null, 
         id_usuario_reporter, 
         motivo, 
