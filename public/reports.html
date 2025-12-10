@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes - Likering Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-section">
+            <img src="https://i.postimg.cc/FKgZRLrW/image.png" alt="Likering Logo" class="sidebar-logo">
+            <h2>Likering Admin</h2>
+        </div>
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="/users.html" class="nav-item">
+                <span>👥</span> Usuarios
+            </a>
+            <a href="/reports.html" class="nav-item active">
+                <span>⚠️</span> Reportes
+            </a>
+        </nav>
+        <div class="user-info">
+            <p id="adminName"></p>
+            <button class="btn btn-secondary" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+    <div class="main-content">
+        <header class="header">
+            <h1>Gestión de Reportes</h1>
+            <div class="header-actions">
+                <div class="filters">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">Todos los estados</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="en_revision">En Revisión</option>
+                        <option value="resuelto">Resuelto</option>
+                        <option value="rechazado">Rechazado</option>
+                    </select>
+                    <select id="typeFilter" class="filter-select">
+                        <option value="">Todos los tipos</option>
+                        <option value="video">Video</option>
+                        <option value="usuario">Usuario</option>
+                        <option value="comentario">Comentario</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="loadReports()">Filtrar</button>
+                </div>
+            </div>
+        </header>
+        <div class="content">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tipo</th>
+                            <th>Reportado Por</th>
+                            <th>Reportado</th>
+                            <th>Motivo</th>
+                            <th>Estado</th>
+                            <th>Prioridad</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportsTableBody">
+                        <tr>
+                            <td colspan="9" class="loading">Cargando reportes...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button class="btn btn-secondary" id="prevPage" onclick="changePage(-1)">Anterior</button>
+                <span id="pageInfo">Página 1</span>
+                <button class="btn btn-secondary" id="nextPage" onclick="changePage(1)">Siguiente</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para ver/editar reporte -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Detalles del Reporte</h2>
+            <div id="reportDetails"></div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/js/auth.js"></script>
+    <script src="/js/reports.js"></script>
+</body>
+</html>
+

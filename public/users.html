@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios - Likering Admin</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo-section">
+            <img src="https://i.postimg.cc/FKgZRLrW/image.png" alt="Likering Logo" class="sidebar-logo">
+            <h2>Likering Admin</h2>
+        </div>
+        <nav class="nav-menu">
+            <a href="/dashboard.html" class="nav-item">
+                <span>📊</span> Dashboard
+            </a>
+            <a href="/users.html" class="nav-item active">
+                <span>👥</span> Usuarios
+            </a>
+            <a href="/reports.html" class="nav-item">
+                <span>⚠️</span> Reportes
+            </a>
+        </nav>
+        <div class="user-info">
+            <p id="adminName"></p>
+            <button class="btn btn-secondary" onclick="logout()">Cerrar Sesión</button>
+        </div>
+    </div>
+    <div class="main-content">
+        <header class="header">
+            <h1>Gestión de Usuarios</h1>
+            <div class="header-actions">
+                <div class="filters">
+                    <input type="text" id="searchInput" placeholder="Buscar por nombre, email o username..." class="search-input">
+                    <select id="statusFilter" class="filter-select">
+                        <option value="">Todos los estados</option>
+                        <option value="activo">Activos</option>
+                        <option value="inactivo">Inactivos</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="loadUsers()">Buscar</button>
+                </div>
+            </div>
+        </header>
+        <div class="content">
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Nombre</th>
+                            <th>Videos</th>
+                            <th>Likes</th>
+                            <th>Visualizaciones</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="9" class="loading">Cargando usuarios...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button class="btn btn-secondary" id="prevPage" onclick="changePage(-1)">Anterior</button>
+                <span id="pageInfo">Página 1</span>
+                <button class="btn btn-secondary" id="nextPage" onclick="changePage(1)">Siguiente</button>
+            </div>
+        </div>
+    </div>
+    <script src="/js/auth.js"></script>
+    <script src="/js/users.js"></script>
+</body>
+</html>
+
